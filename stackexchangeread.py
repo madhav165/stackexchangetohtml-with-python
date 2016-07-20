@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from urllib.request import urlretrieve
 import urllib.request
 from bs4 import BeautifulSoup
 import argparse
@@ -63,6 +64,16 @@ def get_matches(html_doc):
 
     question = main.find('div', {'id':'question'}).table.tr.find('td', class_='postcell').\
     div.div
+    
+    imgs = question.findAll('img')
+    if len(imgs) > 0:
+      for im in imgs:
+        img_url = im['src']
+        file_name = 'html/'+im['src'].split('/')[-1]
+        abs_file_name = os.path.join(script_dir, file_name)
+        urlretrieve(img_url, abs_file_name)
+        im['src'] = im['src'].split('/')[-1]
+
     f.write ('<p>'+str(question)+'</p>')
     
     comment_full = main.find('div', {'id':'question'}).table.findAll('tr')[2].findAll('td')[1].\
@@ -105,7 +116,18 @@ def get_matches(html_doc):
             f.write(' (Rep: '+k.div.find('div', class_='user-details').div.span.text+')')
       f.write('</b></p>')
 
-      f.write ('<p>'+str(x.tr.find('td', class_='answercell').find('div', class_='post-text'))+'</p>')
+      i_answer=x.tr.find('td', class_='answercell').find('div', class_='post-text')
+      
+      imgs = i_answer.findAll('img')
+      if len(imgs) > 0:
+        for im in imgs:
+          img_url = im['src']
+          file_name = 'html/'+im['src'].split('/')[-1]
+          abs_file_name = os.path.join(script_dir, file_name)
+          urlretrieve(img_url, abs_file_name)
+          im['src'] = im['src'].split('/')[-1]
+
+      f.write ('<p>'+str(i_answer)+'</p>')
 
       acomms = x.findAll('tr', recursive=False)[1].find('div', class_='comments').table.tbody.findAll('tr')
       i = 1
