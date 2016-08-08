@@ -55,17 +55,14 @@ def get_matches(html_doc):
 
     #Votes for the question
     q_votes = main.find('div', {'id':'question'}).table.tr.find('td', class_='votecell').div.span.text
-    # f.write('<p><b>'+q_votes+' Votes - ')
-    f.write('<p><b>')
     y = main.find('div', {'id':'question'}).table.tr.find('td', class_='postcell').\
     find('table', class_='fw').tr.findAll('td', class_='post-signature')
     for k in y:
       if k.div.find('div', class_='user-details').a is not None:
           if k.div.find('div', class_='user-action-time').a is None:
-            f.write(k.div.find('div', class_='user-details').a.text) #Asking user
+            f.write('<p><b>' + k.div.find('div', class_='user-details').a.text) #Asking user
             f.write(' (Rep: '+k.div.find('div', class_='user-details').div.span.text+')</b>') #Reputation
-            f.write('<br/><i>'+q_votes+' Votes' + '</i>') #Question votes
-    f.write('</p>')
+            f.write('<br/><i>'+q_votes+' Votes' + '</i></p>') #Question votes
 
     #Question element
     question = main.find('div', {'id':'question'}).table.tr.find('td', class_='postcell').div.div
