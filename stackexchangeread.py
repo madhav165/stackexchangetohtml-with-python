@@ -17,10 +17,8 @@ def get_url():
     URL = args.url
 
 def get_html():
-    #ua = UserAgent()
-    #ua.chrome
-    req = urllib.request.Request(URL, \
-      headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2774.3 Safari/537.36'})
+    req = urllib.request.Request(URL, 
+      headers={'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2816.0 Safari/537.36'})
     with contextlib.closing(urllib.request.urlopen(req)) as f:
         return f.read().decode('utf-8');
 
@@ -31,8 +29,14 @@ def _remove_attrs(soup):
 
 def get_matches(html_doc):
     soup = BeautifulSoup(html_doc, 'lxml')
+
+    #Page title
     title = soup.title.text
+
+    #Remove scripts
     [s.extract() for s in soup('script')]
+
+    #Create HTML file
     script_path = os.path.realpath(__file__)
     script_dir = os.path.split(script_path)[0]
     html_folder_path = os.path.join(script_dir, 'html')
@@ -41,8 +45,12 @@ def get_matches(html_doc):
     rel_path = 'html/'+title.replace('/','')+'.html'
     abs_file_path = os.path.join(script_dir, rel_path)
     f = open(abs_file_path ,'w')
+
+    #Start writing to HTML file
     f.write('<!doctype html><html><head><title>'+title+'</title><meta author="stackexchange.com"></head><body>')
     f.write ('<h1>'+title+'</h1>')
+
+    
     main=soup.find('div', {'id':'mainbar'})
 
     q_votes = main.find('div', {'id':'question'}).table.tr.find('td', class_='votecell').div.span.text
@@ -149,6 +157,4 @@ def get_matches(html_doc):
 get_url()
 html_doc = get_html()
 print ('Connection established')
-#matches = get_matches(html_doc)
 get_matches(html_doc)
-#print_matches(matches)
